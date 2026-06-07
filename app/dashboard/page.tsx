@@ -21,6 +21,8 @@ export default async function CoachDashboard() {
     return <div className="p-10">No coach profile found for demo.</div>;
   }
 
+  const coachSlug = coachProfile.slug;
+
   // Server Actions
   async function saveProfile(formData: FormData) {
     "use server";
@@ -54,7 +56,7 @@ export default async function CoachDashboard() {
     });
 
     revalidatePath("/dashboard");
-    revalidatePath(`/coach/${coachProfile.slug}`);
+    revalidatePath(`/coach/${coachSlug}`);
   }
 
   async function addOffering(formData: FormData) {
