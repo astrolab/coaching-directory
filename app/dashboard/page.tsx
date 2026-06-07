@@ -147,7 +147,7 @@ export default async function CoachDashboard() {
     }
 
     revalidatePath("/dashboard");
-    revalidatePath(`/coach/${coachProfile.slug}`);
+    revalidatePath(`/coach/${coachSlug}`);
   }
 
   async function deletePost(formData: FormData) {
