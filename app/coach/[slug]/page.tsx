@@ -31,8 +31,8 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
 
       {/* Hero */}
       <div className="flex flex-col md:flex-row gap-8 items-start">
-        <img 
-          src={coach.photoUrl} 
+        <img
+          src={coach.photoUrl || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=800&fit=crop"}
           alt={coach.displayName}
           className="w-40 h-40 rounded-2xl object-cover ring-1 ring-black/10 flex-shrink-0"
         />
