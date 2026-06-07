@@ -200,31 +200,73 @@ Rough entities:
 - **Neon** Postgres is the database (serverless, works great with Vercel).
 - Custom domain: `testingzone.live` (we'll point it at Vercel).
 
-### Deployment Steps (What We Just Did)
-1. Push code to a GitHub repo.
-2. Import the repo into Vercel (vercel.com).
-3. Add Environment Variables in Vercel:
-   - `DATABASE_URL` → Use the **pooled** connection string from Neon (the one that contains `-pooler` in the hostname — important for serverless).
-   - `NEXT_PUBLIC_SITE_URL` → `https://testingzone.live`
-4. Deploy.
-5. Connect custom domain in Vercel → Settings → Domains.
-6. Update DNS at your registrar (DreamHost) with the records Vercel gives you (usually an A record for the apex domain).
-7. Run production migrations:
-   ```bash
+### Deployment Steps
+1. Create a new GitHub repository (suggested name: `coaching-directory` — do **not** initialize with README/.gitignore).
+2. If you get "remote origin already exists", first check what is set:
+   ```powershell
+   git remote -v
+   ```
+
+   Then either update the URL (safest):
+   ```powershell
+   git remote set-url origin https://github.com/Astrolab/coaching-directory.git
+   ```
+
+   Or remove and re-add:
+   ```powershell
+   git remote remove origin
+   git remote add origin https://github.com/Astrolab/coaching-directory.git
+   ```
+
+   Then continue with:
+   ```powershell
+   git branch -M main
+   git push -u origin main
+   ```
+
+### How to verify the push worked
+After the push command, you should see output like:
+- `Enumerating objects...`
+- `To https://github.com/Astrolab/coaching-directory.git`
+- `main -> main`
+- `Branch 'main' set up to track remote branch 'main' from 'origin'.`
+
+Then verify in two places:
+1. Run in terminal:
+   ```powershell
+   git status
+   git log --oneline -3
+   ```
+   You should see "Your branch is up to date with 'origin/main'." and recent commits.
+
+2. Go to your browser and visit:
+   https://github.com/Astrolab/coaching-directory
+   You should see all your project files (app/, prisma/, README.md, etc.). If you see them, the push succeeded.
+
+**If you get an authentication error** (very common):
+- The easiest way on Windows is to use the GitHub CLI:
+  1. Install it: `winget install --id GitHub.cli -e --source winget`
+  2. Run `gh auth login` and follow the prompts (it will open your browser).
+  3. Then retry the `git push` command above.
+
+Alternative (Personal Access Token):
+- Go to https://github.com/settings/tokens
+- Generate a new token (classic) with the `repo` scope.
+- When Git asks for your password during push, paste the token instead of your GitHub password.
+3. Go to [vercel.com](https://vercel.com), import your GitHub repo.
+4. Add these Environment Variables:
+   - `DATABASE_URL` = your Neon **pooled** connection string (the one with `-pooler` in the hostname)
+   - `NEXT_PUBLIC_SITE_URL` = `https://testingzone.live`
+5. Deploy.
+6. In Vercel project → Settings → Domains, add `testingzone.live`.
+7. Follow the DNS instructions and update your records at DreamHost.
+8. After DNS propagates, run migrations on production:
+   ```powershell
    npx prisma migrate deploy
    ```
-   (with your production `DATABASE_URL`).
+   (you can temporarily set your local `.env` `DATABASE_URL` to the production one, or use Vercel CLI).
 
-Vercel gives you a free `*.vercel.app` URL immediately for testing. The custom domain will work after DNS propagates (usually 5–60 minutes, sometimes longer).
-
-### Useful Vercel Commands (optional)
-```bash
-npm i -g vercel
-vercel
-vercel --prod
-```
-
-Once the domain is connected, your partner can visit https://testingzone.live directly. SSL is automatic.
+Vercel will give you a `*.vercel.app` URL right away for testing while the custom domain propagates.
 
 ---
 
